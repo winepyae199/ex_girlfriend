@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Two Button Hover Demo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <h1>ချစ်ရပါသော ရည်းစားဟောင်းလေး</h1>
+      <p>မမ မရှိရင်မနေနိုင်လို့ ပြန်တွဲရအောင်ပါနော်</p>
+      <img src="Khaing Zar Thwe/img/0607(2).gif" alt="kiss" id="kiss-img" />
+      <div class="actions">
+        <button class="steady-button" type="button">ပြန်တွဲကြမယ်</button>
+        <span class="runaway-placeholder" aria-hidden="true"></span>
+      </div>
+    </main>
+
+    <button
+      class="runaway-button"
+      type="button"
+      aria-label="Moving hover button"
+    >
+      ပြန်မတွဲဘူး
+    </button>
+
+    <div
+      class="popup-overlay"
+      id="popup"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="popupTitle"
+    >
+      <div class="popup-box">
+        <h2 id="popupTitle">Yayyyyyy</h2>
+        <p>မမ ပြန်တွဲချင်တာသိတာပေါ့😘</p>
+        <button class="close-popup" type="button">Close</button>
+      </div>
+    </div>
+
+    <script>
+      const steadyButton = document.querySelector(".steady-button");
+      const runawayPlaceholder = document.querySelector(".runaway-placeholder");
+      const runawayButton = document.querySelector(".runaway-button");
+      const popup = document.querySelector("#popup");
+      const closePopupButton = document.querySelector(".close-popup");
+      const edgePadding = 18;
+      let lastX = 0;
+      let lastY = 0;
+
+      function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+      }
+
+      function bounds() {
+        const rect = runawayButton.getBoundingClientRect();
+        return {
+          maxX: Math.max(
+            edgePadding,
+            window.innerWidth - rect.width - edgePadding,
+          ),
+          maxY: Math.max(
+            edgePadding,
+            window.innerHeight - rect.height - edgePadding,
+          ),
+        };
+      }
+
+      function placeInitialButton() {
+        runawayButton.classList.remove("can-move");
+        runawayButton.style.transition = "none";
+        const { maxX, maxY } = bounds();
+        const placeholderRect = runawayPlaceholder.getBoundingClientRect();
+
+        lastX = clamp(placeholderRect.left, edgePadding, maxX);
+        lastY = clamp(placeholderRect.top, edgePadding, maxY);
+        runawayButton.style.left = `${lastX}px`;
+        runawayButton.style.top = `${lastY}px`;
+        runawayButton.classList.add("is-set");
+        runawayButton.offsetWidth;
+        requestAnimationFrame(() => {
+          runawayButton.style.transition = "";
+          requestAnimationFrame(() => {
+            runawayButton.classList.add("can-move");
+          });
+        });
+      }
+
+      function moveButton() {
+        const { maxX, maxY } = bounds();
+        let nextX = lastX;
+        let nextY = lastY;
+
+        for (let attempt = 0; attempt < 20; attempt += 1) {
+          nextX = Math.random() * (maxX - edgePadding) + edgePadding;
+          nextY = Math.random() * (maxY - edgePadding) + edgePadding;
+
+          const distance = Math.hypot(nextX - lastX, nextY - lastY);
+          if (distance > 140 || attempt === 19) {
+            break;
+          }
+        }
+
+        lastX = clamp(nextX, edgePadding, maxX);
+        lastY = clamp(nextY, edgePadding, maxY);
+        runawayButton.style.left = `${lastX}px`;
+        runawayButton.style.top = `${lastY}px`;
+      }
+
+      runawayButton.addEventListener("mouseenter", moveButton);
+      runawayButton.addEventListener("focus", moveButton);
+      steadyButton.addEventListener("click", () => {
+        popup.classList.add("is-open");
+      });
+      closePopupButton.addEventListener("click", () => {
+        popup.classList.remove("is-open");
+      });
+      window.addEventListener("resize", placeInitialButton);
+      window.addEventListener("load", placeInitialButton);
+    </script>
+  </body>
+</html>
