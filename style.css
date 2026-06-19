@@ -21,7 +21,7 @@ body {
   overflow: hidden;
   display: grid;
   place-items: center;
-  background-image: url("Khaing\ Zar\ Thwe/img/download\ \(1\).gif");
+  background-image: url("img/download\ \(1\).gif");
   background-size: cover;
   background-position: center;
   color: var(--ink);
